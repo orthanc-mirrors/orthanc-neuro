@@ -20,6 +20,7 @@
 #pragma once
 
 #include <boost/noncopyable.hpp>
+#include <stdint.h>
 #include <string>
 #include <vector>
 
