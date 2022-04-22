@@ -381,8 +381,13 @@ namespace Neuro
 
     std::vector<Slice> sortedSlices;
     sortedSlices.reserve(unsortedSlices.size());
-    std::copy(std::begin(unsortedSlices), std::end(unsortedSlices), std::back_inserter(sortedSlices));
 
+    for (std::list<Slice>::const_iterator it = unsortedSlices.begin();
+         it != unsortedSlices.end(); ++it)
+    {
+      sortedSlices.push_back(*it);
+    }
+    
     SliceComparator comparator;
     std::sort(sortedSlices.begin(), sortedSlices.end(), comparator);
 
