@@ -149,7 +149,22 @@ static Neuro::InputDicomInstance* AcquireInstance(const std::string& instanceId)
 
   return instance.release();
 #endif
-}  
+}
+
+
+static bool HasBooleanFlag(const OrthancPluginHttpRequest* request,
+                           const std::string& flag)
+{
+  for (uint32_t i = 0; i < request->getCount; i++)
+  {
+    if (std::string(request->getKeys[i]) == flag)
+    {
+      return true;
+    }
+  }
+
+  return false;
+}
 
 
 void SeriesToNifti(OrthancPluginRestOutput* output,
@@ -196,10 +211,18 @@ void SeriesToNifti(OrthancPluginRestOutput* output,
       }
     }
 
-    std::string nifti;
-    CreateNifti(nifti, collection, false /* todo - compress */);
+    const bool compress = HasBooleanFlag(request, "compress");
 
-    const std::string contentDisposition = "filename=\"" + seriesId + ".nii\"";
+    std::string nifti;
+    CreateNifti(nifti, collection, compress);
+
+    std::string filename = seriesId + ".nii";
+    if (compress)
+    {
+      filename += ".gz";
+    }
+    
+    const std::string contentDisposition = "filename=\"" + filename + "\"";
     OrthancPluginSetHttpHeader(context, output, "Content-Disposition", contentDisposition.c_str());
   
     OrthancPluginAnswerBuffer(context, output, nifti.c_str(), nifti.size(), "application/octet-stream");
@@ -224,10 +247,18 @@ void InstanceToNifti(OrthancPluginRestOutput* output,
     Neuro::DicomInstancesCollection collection;
     collection.AddInstance(AcquireInstance(instanceId), instanceId);
 
-    std::string nifti;
-    CreateNifti(nifti, collection, false /* todo - compress */);
+    const bool compress = HasBooleanFlag(request, "compress");
 
-    const std::string contentDisposition = "filename=\"" + instanceId + ".nii\"";
+    std::string nifti;
+    CreateNifti(nifti, collection, compress);
+
+    std::string filename = instanceId + ".nii";
+    if (compress)
+    {
+      filename += ".gz";
+    }
+
+    const std::string contentDisposition = "filename=\"" + filename + "\"";
     OrthancPluginSetHttpHeader(context, output, "Content-Disposition", contentDisposition.c_str());
   
     OrthancPluginAnswerBuffer(context, output, nifti.c_str(), nifti.size(), "application/octet-stream");
