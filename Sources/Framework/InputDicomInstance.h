@@ -19,16 +19,16 @@
 
 #pragma once
 
-#if !defined(ORTHANC_ENABLE_DCMTK)
-#  error The macro ORTHANC_ENABLE_DCMTK must be defined
-#endif
-
 #include "CSAHeader.h"
 #include "NeuroEnumerations.h"
 #include "Slice.h"
 
 #include <DicomFormat/DicomImageInformation.h>
 #include <DicomFormat/DicomMap.h>
+
+#if !defined(ORTHANC_ENABLE_DCMTK)
+#  error The macro ORTHANC_ENABLE_DCMTK must be defined
+#endif
 
 #if ORTHANC_ENABLE_DCMTK == 1
 #  include <DicomParsing/ParsedDicomFile.h>

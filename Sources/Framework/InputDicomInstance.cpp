@@ -611,7 +611,8 @@ namespace Neuro
         !GetCSAHeader().ParseUnsignedInteger32(numberOfImagesInMosaic, CSA_NUMBER_OF_IMAGES_IN_MOSAIC) ||
         numberOfImagesInMosaic == 0)
     {
-      throw Orthanc::OrthancException(Orthanc::ErrorCode_BadFileFormat);
+      ExtractGenericSlices(slices, instanceIndexInCollection);
+      return;
     }
   
     const unsigned int countPerAxis = static_cast<unsigned int>(std::ceil(sqrtf(numberOfImagesInMosaic)));
