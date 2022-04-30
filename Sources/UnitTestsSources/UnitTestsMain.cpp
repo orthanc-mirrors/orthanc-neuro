@@ -22,6 +22,39 @@
 #include <Logging.h>
 
 
+#if ORTHANC_ENABLE_DCMTK == 1
+#  include "../Framework/InputDicomInstance.h"
+#  include <DicomParsing/ParsedDicomFile.h>
+#  include <SystemToolbox.h>
+
+TEST(Dcmtk, DumpCSAHeader)
+{
+  std::string s;
+  Orthanc::SystemToolbox::ReadFile(s, "49210406");
+  
+  Orthanc::ParsedDicomFile dicom(s);
+
+  Neuro::InputDicomInstance instance(dicom);
+
+  std::list<std::string> tags;
+  instance.GetCSAHeader().ListTags(tags);
+
+  for (std::list<std::string>::const_iterator it = tags.begin(); it != tags.end(); ++it)
+  {
+    const Neuro::CSATag& tag = instance.GetCSAHeader().GetTag(*it);
+    
+    printf("[%s] (%d) = ", it->c_str(), tag.GetSize());
+    for (size_t i = 0; i < tag.GetSize(); i++)
+    {
+      printf("[%s] ", tag.GetStringValue(i).c_str());
+    }
+    
+    printf("\n");
+  }
+}
+#endif
+
+
 int main(int argc, char **argv)
 {
   Orthanc::Logging::Initialize();
