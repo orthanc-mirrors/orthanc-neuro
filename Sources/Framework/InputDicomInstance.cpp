@@ -38,6 +38,8 @@
 static const Orthanc::DicomTag DICOM_TAG_ECHO_TIME(0x0018, 0x0081);
 static const Orthanc::DicomTag DICOM_TAG_IN_PLANE_PHASE_ENCODING_DIRECTION(0x0018, 0x1312);
 static const Orthanc::DicomTag DICOM_TAG_REPETITION_TIME(0x0018, 0x0080);
+static const Orthanc::DicomTag DICOM_TAG_RESCALE_INTERCEPT_PHILIPS(0x2005, 0x1409);
+static const Orthanc::DicomTag DICOM_TAG_RESCALE_SLOPE_PHILIPS(0x2005, 0x140a);
 static const Orthanc::DicomTag DICOM_TAG_SLICE_SLOPE_PHILIPS(0x2005, 0x100e);
 static const Orthanc::DicomTag DICOM_TAG_SLICE_TIMING_SIEMENS(0x0019, 0x1029);
 static const Orthanc::DicomTag DICOM_TAG_SPACING_BETWEEN_SLICES(0x0018, 0x0088);
@@ -231,50 +233,57 @@ namespace Neuro
   }
 
 
+  static double GetSingleValue(const std::vector<double>& values)
+  {
+    if (values.size() == 1)
+    {
+      return values[0];
+    }
+    else
+    {
+      throw Orthanc::OrthancException(Orthanc::ErrorCode_BadFileFormat);
+    }    
+  }
+  
+
   void InputDicomInstance::ParseRescale()
   {
     std::vector<double> v;
       
-    if (NeuroToolbox::ParseVector(v, *tags_, Orthanc::DICOM_TAG_RESCALE_SLOPE))
+    if (NeuroToolbox::ParseVector(v, *tags_, DICOM_TAG_RESCALE_SLOPE_PHILIPS))
     {
-      if (v.size() == 1)
-      {
-        rescaleSlope_ = v[0];
-      }
-      else
-      {
-        throw Orthanc::OrthancException(Orthanc::ErrorCode_BadFileFormat);
-      }
+      rescaleSlope_ = GetSingleValue(v);
     }
     else
     {
-      rescaleSlope_ = 1;
-    }
-
-    if (manufacturer_ == Manufacturer_Philips &&
-        NeuroToolbox::ParseVector(v, *tags_, DICOM_TAG_SLICE_SLOPE_PHILIPS))
-    {
-      if (v.size() == 1 &&
-          !NeuroToolbox::IsNear(v[0], 0))
+      if (NeuroToolbox::ParseVector(v, *tags_, Orthanc::DICOM_TAG_RESCALE_SLOPE))
       {
-        rescaleSlope_ /= v[0];  // cf. PMC3998685
+        rescaleSlope_ = GetSingleValue(v);
       }
       else
       {
-        throw Orthanc::OrthancException(Orthanc::ErrorCode_BadFileFormat);
+        rescaleSlope_ = 1;
+      }
+
+      if (manufacturer_ == Manufacturer_Philips &&
+          NeuroToolbox::ParseVector(v, *tags_, DICOM_TAG_SLICE_SLOPE_PHILIPS))
+      {
+        if (v.size() == 1 &&
+            !NeuroToolbox::IsNear(v[0], 0))
+        {
+          rescaleSlope_ /= v[0];  // cf. PMC3998685
+        }
+        else
+        {
+          throw Orthanc::OrthancException(Orthanc::ErrorCode_BadFileFormat);
+        }
       }
     }
 
-    if (NeuroToolbox::ParseVector(v, *tags_, Orthanc::DICOM_TAG_RESCALE_INTERCEPT))
+    if (NeuroToolbox::ParseVector(v, *tags_, Orthanc::DICOM_TAG_RESCALE_INTERCEPT) ||
+        NeuroToolbox::ParseVector(v, *tags_, DICOM_TAG_RESCALE_INTERCEPT_PHILIPS))
     {
-      if (v.size() == 1)
-      {
-        rescaleIntercept_ = v[0];
-      }
-      else
-      {
-        throw Orthanc::OrthancException(Orthanc::ErrorCode_BadFileFormat);
-      }
+      rescaleIntercept_ = GetSingleValue(v);
     }
     else
     {
