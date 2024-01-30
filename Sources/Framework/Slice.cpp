@@ -1,6 +1,6 @@
 /**
  * Neuroimaging plugin for Orthanc
- * Copyright (C) 2021-2022 Sebastien Jodogne, UCLouvain, Belgium
+ * Copyright (C) 2021-2024 Sebastien Jodogne, ICTEAM UCLouvain, Belgium
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
