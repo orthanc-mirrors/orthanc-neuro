@@ -24,7 +24,9 @@
 #include <OrthancException.h>
 #include <SerializationToolbox.h>
 
+#include <algorithm>
 #include <boost/lexical_cast.hpp>
+#include <cassert>
 
 static const std::string CSA_PHASE_ENCODING_DIRECTION_POSITIVE = "PhaseEncodingDirectionPositive";
 
