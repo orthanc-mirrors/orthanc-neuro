@@ -27,6 +27,8 @@
 #include <Logging.h>
 #include <SystemToolbox.h>
 
+#define ORTHANC_PLUGIN_NAME  "neuro"
+
 
 static void CreateNifti(std::string& target,
                         const Neuro::DicomInstancesCollection& collection,
@@ -283,7 +285,7 @@ extern "C"
       return -1;
     }
 
-    OrthancPluginSetDescription(context, "Add support for NIfTI in Orthanc.");
+    OrthancPlugins::SetDescription(ORTHANC_PLUGIN_NAME, "Add support for NIfTI in Orthanc.");
 
     OrthancPlugins::RegisterRestCallback<SeriesToNifti>("/series/(.*)/nifti", true /* thread safe */);
     OrthancPlugins::RegisterRestCallback<InstanceToNifti>("/instances/(.*)/nifti", true /* thread safe */);
@@ -292,7 +294,7 @@ extern "C"
       std::string explorer;
       Orthanc::EmbeddedResources::GetFileResource(
         explorer, Orthanc::EmbeddedResources::ORTHANC_EXPLORER);
-      OrthancPluginExtendOrthancExplorer(context, explorer.c_str());
+      OrthancPlugins::ExtendOrthancExplorer(ORTHANC_PLUGIN_NAME, explorer.c_str());
     }
  
     return 0;
@@ -306,7 +308,7 @@ extern "C"
 
   ORTHANC_PLUGINS_API const char* OrthancPluginGetName()
   {
-    return "neuro";
+    return ORTHANC_PLUGIN_NAME;
   }
 
 
