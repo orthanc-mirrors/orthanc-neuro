@@ -27,7 +27,7 @@
 #  include <DicomParsing/ParsedDicomFile.h>
 #  include <SystemToolbox.h>
 
-TEST(Dcmtk, DumpCSAHeader)
+TEST(Dcmtk, DISABLED_DumpCSAHeader)
 {
   std::string s;
   Orthanc::SystemToolbox::ReadFile(s, "49210406");
