@@ -25,8 +25,6 @@ FILES = [
     ('OrthancFramework/Resources/Toolchains/MinGW-W64-Toolchain32.cmake', 'Toolchains'),
     ('OrthancFramework/Resources/Toolchains/MinGW-W64-Toolchain64.cmake', 'Toolchains'),
     ('OrthancFramework/Resources/Toolchains/MinGWToolchain.cmake', 'Toolchains'),
-    ('OrthancFramework/Resources/WindowsResources.py', 'CMake'),
-    ('OrthancFramework/Resources/WindowsResources.rc', 'CMake'),
     ('OrthancServer/Plugins/Samples/Common/ExportedSymbolsPlugins.list', 'Plugins'),
     ('OrthancServer/Plugins/Samples/Common/OrthancPluginCppWrapper.cpp', 'Plugins'),
     ('OrthancServer/Plugins/Samples/Common/OrthancPluginCppWrapper.h', 'Plugins'),
